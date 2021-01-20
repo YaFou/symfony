@@ -34,6 +34,8 @@ class Route
     private $schemes = [];
     private $condition;
     private $priority;
+    private $translated;
+    private $translationDomain;
 
     /**
      * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
@@ -59,7 +61,9 @@ class Route
         string $locale = null,
         string $format = null,
         bool $utf8 = null,
-        bool $stateless = null
+        bool $stateless = null,
+        bool $translated = false,
+        string $translationDomain = 'routing'
     ) {
         if (\is_string($data)) {
             $data = ['path' => $data];
@@ -84,6 +88,8 @@ class Route
         $data['format'] = $data['format'] ?? $format;
         $data['utf8'] = $data['utf8'] ?? $utf8;
         $data['stateless'] = $data['stateless'] ?? $stateless;
+        $data['translated'] = $data['translated'] ?? $translated;
+        $data['translation_domain'] = $data['translation_domain'] ?? $translationDomain;
 
         $data = array_filter($data, static function ($value): bool {
             return null !== $value;
@@ -240,5 +246,25 @@ class Route
     public function getPriority(): ?int
     {
         return $this->priority;
+    }
+
+    public function isTranslated(): bool
+    {
+        return $this->translated;
+    }
+
+    public function setTranslated(bool $translated): void
+    {
+        $this->translated = $translated;
+    }
+
+    public function getTranslationDomain(): string
+    {
+        return $this->translationDomain;
+    }
+
+    public function setTranslationDomain(string $translationDomain): void
+    {
+        $this->translationDomain = $translationDomain;
     }
 }

@@ -563,4 +563,13 @@ class XmlFileLoaderTest extends TestCase
 
         $this->assertEquals($expectedRoutes('xml'), $routes);
     }
+
+    public function testImportingRoutesWithTranslation()
+    {
+        $loader = new XmlFileLoader(new FileLocator([__DIR__.'/../Fixtures/localized']));
+        $routes = $loader->load('translation-enabled.xml');
+        $this->assertTrue($routes->get('home')->isTranslated());
+        $this->assertSame('routing', $routes->get('home')->getTranslationDomain());
+        $this->assertSame('new-routing', $routes->get('about')->getTranslationDomain());
+    }
 }

@@ -118,7 +118,7 @@ class XmlFileLoader extends FileLoader
         $schemes = preg_split('/[\s,\|]++/', $node->getAttribute('schemes'), -1, \PREG_SPLIT_NO_EMPTY);
         $methods = preg_split('/[\s,\|]++/', $node->getAttribute('methods'), -1, \PREG_SPLIT_NO_EMPTY);
 
-        [$defaults, $requirements, $options, $condition, $paths, /* $prefixes */, $hosts] = $this->parseConfigs($node, $path);
+        [$defaults, $requirements, $options, $condition, $paths, /* $prefixes */, $hosts, $translated] = $this->parseConfigs($node, $path);
 
         if (!$paths && '' === $node->getAttribute('path')) {
             throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must have a "path" attribute or <path> child nodes.', $path));
@@ -135,6 +135,7 @@ class XmlFileLoader extends FileLoader
         $routes->setSchemes($schemes);
         $routes->setMethods($methods);
         $routes->setCondition($condition);
+        $routes->setTranslated($translated);
 
         if (null !== $hosts) {
             $this->addHost($routes, $hosts);
@@ -249,6 +250,7 @@ class XmlFileLoader extends FileLoader
         $prefixes = [];
         $paths = [];
         $hosts = [];
+        $translated = [];
 
         /** @var \DOMElement $n */
         foreach ($node->getElementsByTagNameNS(self::NAMESPACE_URI, '*') as $n) {
@@ -282,6 +284,9 @@ class XmlFileLoader extends FileLoader
                     break;
                 case 'condition':
                     $condition = trim($n->textContent);
+                    break;
+                case 'translated':
+                    $translated[$n->getAttribute('key')] = (bool) trim($n->textContent);
                     break;
                 default:
                     throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "default", "requirement", "option" or "condition".', $n->localName, $path));
@@ -320,7 +325,7 @@ class XmlFileLoader extends FileLoader
             $hosts = $node->hasAttribute('host') ? $node->getAttribute('host') : null;
         }
 
-        return [$defaults, $requirements, $options, $condition, $paths, $prefixes, $hosts];
+        return [$defaults, $requirements, $options, $condition, $paths, $prefixes, $hosts, $translated];
     }
 
     /**

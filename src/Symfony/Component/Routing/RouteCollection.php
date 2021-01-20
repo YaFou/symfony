@@ -303,4 +303,18 @@ class RouteCollection implements \IteratorAggregate, \Countable
             $this->resources[$key] = $resource;
         }
     }
+
+    public function setTranslated(bool $translated): void
+    {
+        foreach ($this->routes as $route) {
+            $route->setTranslated($translated);
+        }
+    }
+
+    public function setTranslationDomain(string $translationDomain): void
+    {
+        foreach ($this->routes as $route) {
+            $route->setTranslationDomain($translationDomain);
+        }
+    }
 }

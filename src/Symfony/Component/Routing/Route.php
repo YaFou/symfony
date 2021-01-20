@@ -27,6 +27,8 @@ class Route implements \Serializable
     private $requirements = [];
     private $options = [];
     private $condition = '';
+    private $translated = false;
+    private $translationDomain = 'routing';
 
     /**
      * @var CompiledRoute|null
@@ -50,7 +52,7 @@ class Route implements \Serializable
      * @param string|string[] $methods      A required HTTP method or an array of restricted methods
      * @param string|null     $condition    A condition that should evaluate to true for the route to match
      */
-    public function __construct(string $path, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '')
+    public function __construct(string $path, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '', bool $translated = false, string $translationDomain = 'routing')
     {
         $this->setPath($path);
         $this->addDefaults($defaults);
@@ -60,6 +62,8 @@ class Route implements \Serializable
         $this->setSchemes($schemes);
         $this->setMethods($methods);
         $this->setCondition($condition);
+        $this->setTranslated($translated);
+        $this->setTranslationDomain($translationDomain);
     }
 
     public function __serialize(): array
@@ -577,5 +581,25 @@ class Route implements \Serializable
     private function isLocalized(): bool
     {
         return isset($this->defaults['_locale']) && isset($this->defaults['_canonical_route']) && ($this->requirements['_locale'] ?? null) === preg_quote($this->defaults['_locale']);
+    }
+
+    public function isTranslated(): bool
+    {
+        return $this->translated;
+    }
+
+    public function setTranslated(bool $translated): void
+    {
+        $this->translated = $translated;
+    }
+
+    public function getTranslationDomain(): string
+    {
+        return $this->translationDomain;
+    }
+
+    public function setTranslationDomain(string $translationDomain): void
+    {
+        $this->translationDomain = $translationDomain;
     }
 }

@@ -435,4 +435,13 @@ class YamlFileLoaderTest extends TestCase
 
         $this->assertEquals($expectedRoutes('yml'), $routes);
     }
+
+    public function testImportingRoutesWithTranslation()
+    {
+        $loader = new YamlFileLoader(new FileLocator([__DIR__.'/../Fixtures/localized']));
+        $routes = $loader->load('translation-enabled.yml');
+        $this->assertTrue($routes->get('home')->isTranslated());
+        $this->assertSame('routing', $routes->get('home')->getTranslationDomain());
+        $this->assertSame('new-routing', $routes->get('about')->getTranslationDomain());
+    }
 }

@@ -34,7 +34,7 @@ class YamlFileLoader extends FileLoader
     use PrefixTrait;
 
     private static $availableKeys = [
-        'resource', 'type', 'prefix', 'path', 'host', 'schemes', 'methods', 'defaults', 'requirements', 'options', 'condition', 'controller', 'name_prefix', 'trailing_slash_on_root', 'locale', 'format', 'utf8', 'exclude', 'stateless',
+        'resource', 'type', 'prefix', 'path', 'host', 'schemes', 'methods', 'defaults', 'requirements', 'options', 'condition', 'controller', 'name_prefix', 'trailing_slash_on_root', 'locale', 'format', 'utf8', 'exclude', 'stateless', 'translated', 'translation_domain',
     ];
     private $yamlParser;
 
@@ -146,6 +146,8 @@ class YamlFileLoader extends FileLoader
         $routes->setSchemes($config['schemes'] ?? []);
         $routes->setMethods($config['methods'] ?? []);
         $routes->setCondition($config['condition'] ?? null);
+        $routes->setTranslated($config['translated'] ?? false);
+        $routes->setTranslationDomain($config['translation_domain'] ?? 'routing');
 
         if (isset($config['host'])) {
             $this->addHost($routes, $config['host']);
@@ -257,6 +259,9 @@ class YamlFileLoader extends FileLoader
         }
         if (isset($config['stateless']) && isset($config['defaults']['_stateless'])) {
             throw new \InvalidArgumentException(sprintf('The routing file "%s" must not specify both the "stateless" key and the defaults key "_stateless" for "%s".', $path, $name));
+        }
+        if (isset($config['translated']) && !is_bool($config['translated'])) {
+            throw new \InvalidArgumentException(sprintf('The "translated" key for the route definition "%s" in "%s" must be a boolean.', $path, $name));
         }
     }
 }

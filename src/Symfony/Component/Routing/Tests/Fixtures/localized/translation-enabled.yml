@@ -1,0 +1,9 @@
+---
+home:
+    path: /home
+    translated: true
+
+about:
+    path: /about
+    translated: true
+    translation_domain: new-routing
